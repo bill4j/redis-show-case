@@ -1,0 +1,22 @@
+一、分布式锁
+
+service层:
+/**
+ * 1.service层应用redis锁
+ *
+*/
+@Override
+public String getBwWishBankAuthUrlLock(final Long applyId,final String returnUrl,final String backUrl) throws BusinessException{
+	try {
+		return  (String) LoanCommonRedisLock.getInstance().executeWithLockAndResult(applyId.toString()+"bank", new RedisLockCallbackWithResult() {
+			@Override
+			public Object execute() throws BusinessException {
+				return getBwWishBankAuthUrl(applyId,returnUrl,backUrl);
+			}
+		});
+	} catch (BusiLockedException e) {
+		logger.error("getBwWishBankAuthUrlLock:",e);  
+		throw new BusinessException("您的操作过频繁,请稍后再试");
+	}
+}
+

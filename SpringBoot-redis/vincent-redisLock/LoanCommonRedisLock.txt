@@ -1,0 +1,63 @@
+/**
+ * 1.相关配置（相关不可变String打码）
+*/
+public class OrderRedisConstants {
+
+    private static final String REDIS_ORDER_GROUP = "redis_order";
+
+
+    public  enum OrderRedisConfig {
+        WISH_ORDER_NUM("同一&*……**&（&（登陆／未……&*……&量", REDIS_ORDER_GROUP,1050001),
+        PUFA_CITY_INFO("根*&%￥……&&……*浦发&*息", REDIS_ORDER_GROUP,1050002),
+        ZH_BANK_CODE("中￥%#获……&%……&取",REDIS_OR@#￥@UP,1050003),
+        PROCESS_lOCK("流程锁",REDIS_OR@#￥@#OUP,1050004),
+        ICBC_FTP_SERIAL("工行上传FTP序号",REDIS_OR@#￥R_GROUP,1050005),
+        ICBC_FTP_LOCK("工行……%￥……,red5s锁",REDIS_OR@#￥R_GROUP,1050006),
+        CBHB_FTP_SERIAL("渤海银行上传FTP序号",REDIS_ORDER_GROUP,1050007),
+        CBHB_FTP_LOCK("渤海#￥%#dis锁",REDIS_ORDER_GROUP,1050008),
+        TELEMARKET_EMPLOYEE_INFO("待分单#￥%#%工信息",REDIS_ORDER_GROUP,1050009),
+        DIVIDED_ORDER_TIME("电时@#￥信%……息",RED#￥_OR#￥ER_GROUP,1050010),
+        MMC_CREATE_ORDER_LOCK("买买车创建订单,redis锁",REDIS_ORDER_GROUP,1050020),
+        CEBF_FTP_SERIAL("光大金租上传FTP序号",RED#￥%@￥@UP,1050030),
+        LOAN_COMMON_REDIS_LOCK("贷款公共redis锁",RE@#@#@#@#P,1050021);
+
+
+        private final String name;// 说明名称
+
+        private final String groupName;// 组名
+
+        private final Integer nameSpace;// 命名空间
+
+        OrderRedisConfig(String name, String groupName, Integer nameSpace) {
+            this.name = name;
+            this.groupName = groupName;
+            this.nameSpace = nameSpace;
+        }
+
+        public String getName() {
+            return name;
+        }
+        public String getGroupName() {
+            return groupName;
+        }
+
+        public Integer getNameSpace() {
+            return nameSpace;
+        }
+    }
+
+    public static final ListCommands WishOrderNum = RedisFactory.getClusterListCommands(RedisConfig.W@#￥@#￥@#￥@#￥@.getGroupName());
+    public static final String WISH_ORDER__NUM_KEY = "wish_order_@#￥@#￥@ky_";
+    public static final StringCommands stringCommandPufaCityInfo = RedisFactory.getClusterStringCommands(RedisConfig.@#￥@#￥@#￥.getGroupName());
+    public static final String PUFA_CITYINFO_KEY = "pufa@#￥@#￥@#￥_y_";
+
+    public static final HashCommands hashCommandZhBankCode = RedisFactory.getClusterHashCommands(RedisConfi￥%#￥%#￥%#￥%#.getGroupName());
+    public static final String ZH_BANK_CODE_HASH_KEY = "zh_bankc@#￥@#￥ode_h@#￥@￥y_";
+    public static final String PROCESS_LOCK_KEY = "p_lock_";
+    public static final AtomicCommands atomicCommandLock = RedisFactory.getClusterAtomicCommands(Red￥#%#￥%#%#%#%#%#CK.getGroupName());
+
+    public static final ListCommands telemarketEmployee = RedisFactory.getClusterListCommands(RedisConfig.TELE￥#%#%#￥%#￥%#OE_INFO.getGroupName());
+    public static final String TELEMARKET_EMPLOYEE_KEY = "telem#￥@￥@#￥@￥@￥e_key_";
+    public static final HashCommands dividedOrderTime = RedisFactory.getClusterHashCommands(RedisConfig.DIVID%……#%#￥R_TIME.getGroupName());
+    public static final String DIVIDED_ORDER_TIME_KEY = "divide@#￥@#￥@#￥key_";
+}

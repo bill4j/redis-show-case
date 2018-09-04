@@ -1,0 +1,112 @@
+
+/**
+ * 1.redis在我们项目中的封装（）
+ *
+*/
+
+public abstract class RedisLock {
+
+    public void executeWithLock(String id, RedisLockCallback callback) throws BusiLockedException, BusinessException {
+        if(tryLock(id)){
+            try {
+                callback.execute();
+            }finally {
+            	releaseLock(id);
+            }
+        }
+    }
+
+    public Object executeWithLockAndResult(String id, RedisLockCallbackWithResult callback) throws BusiLockedException, BusinessException {
+        Object result = null ;
+        if(tryLock(id)){
+            try {
+             result= callback.execute();
+            }finally {
+                releaseLock(id);
+            }
+        }
+        return result;
+    }
+
+    public abstract String getBusiType();
+    public abstract long getExpireSeconds();
+    public abstract int getRedisLockNameSpace();
+    public abstract String getGroupName();
+
+    protected boolean tryLock(String id) throws BusiLockedException {
+        return setLockIfAbsent(getLockKey(id), "true");
+    }
+
+    protected void releaseLock(String id){
+        getValueCommands().delete(getRedisLockNameSpace(), getLockKey(id),true);
+    }
+
+    private String getLockKey(String id){
+        return MessageFormat.format("{0}_{1}", getBusiType(), id);
+    }
+
+    private boolean setLockIfAbsent(String key, String value) throws BusiLockedException {
+        boolean locked = getValueCommands().setIfAbsent(getRedisLockNameSpace(), key, value,true);
+        if(locked){
+            setLockExpire(key);
+            return locked;
+        }else {
+        	Long ex = getValueCommands().getExpire(getRedisLockNameSpace(), key);
+        	if(ex == -1 || ex == -2) {
+        		setLockExpire(key);
+        	}
+        }
+        throw new BusiLockedException("未抢到锁, key:" + key);
+    }
+
+    private void setLockExpire(String key){
+        getValueCommands().expire(getRedisLockNameSpace(), key, getExpireSeconds(), TimeUnit.SECONDS, true);
+    }
+
+    private ValueCommands getValueCommands(){
+        return RedisFactory.getClusterValueCommands(getGroupName());
+    }
+
+}
+
+/**
+ * 1.LoanCommonRedisLock(根据业务自定义)
+ *
+*/
+public class LoanCommonRedisLock extends RedisLock {
+
+    private static LoanCommonRedisLock INSTANCE = new LoanCommonRedisLock();
+    private Long expire=60L;
+
+    public static LoanCommonRedisLock getInstance(){
+        return INSTANCE;
+    }
+    @Override
+    public String getBusiType() {
+        return  "LOAN_COMMON_REDIS_LOCK";
+    }
+
+    @Override
+    public long getExpireSeconds() {
+        return getExpire();
+    }
+
+    @Override
+    public int getRedisLockNameSpace() {
+        return OrderRedisConstants.OrderRedisConfig.LOAN_COMMON_REDIS_LOCK.getNameSpace();
+    }
+
+    @Override
+    public String getGroupName() {
+        return OrderRedisConstants.OrderRedisConfig.LOAN_COMMON_REDIS_LOCK.getGroupName();
+    }
+
+    public Long getExpire() {
+        return expire;
+    }
+
+    public LoanCommonRedisLock setExpire(Long expire) {
+        this.expire = expire;
+        return this;
+    }
+}
