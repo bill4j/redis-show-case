@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * @author 何红霞~Angelina
+ * @author Angelina
  */
 public class JsonUtils {
 
