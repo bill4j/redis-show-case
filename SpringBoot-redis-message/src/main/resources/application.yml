@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: redis-test
+  profiles:
+    active: lj
+
+
+---
+spring:
+  profiles: hhx
+  redis:
+    host: 127.0.0.1
+    password: Angelina
+    port: 6379
+
+---
+spring:
+  profiles: lj
+  redis:
+    host: 127.0.0.2
+    password: lijun
+    port: 6378
