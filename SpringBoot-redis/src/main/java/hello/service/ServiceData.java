@@ -2,7 +2,7 @@ package hello.service;
 
 import hello.dao.MysqlData;
 import hello.domain.model.Person;
-import hello.util.JsonUtils;
+import hello.util.JsonUtil;
 import hello.util.RedisOperations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,10 +29,10 @@ public class ServiceData {
         if(StringUtils.isEmpty(value)){
             //get the data from mysql
             list=mysqlData.queryPerson();
-            redisOperations.set("ha", JsonUtils.objectToJson(list),100L);
+            redisOperations.set("ha", JsonUtil.objectToJson(list),100L);
             return list;
         }else {
-            return JsonUtils.jsonToList(value,Person.class);
+            return JsonUtil.jsonToList(value,Person.class);
         }
     }
 
