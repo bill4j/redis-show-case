@@ -17,4 +17,14 @@ public class RedisProperties {
     private String host = "localhost";
     private String password;
     private int port = 6379;
+
+    public static String nameSpace;
+
+    public static String getNameSpace() {
+        return nameSpace;
+    }
+
+    public static void setNameSpace(String nameSpace) {
+        RedisProperties.nameSpace = nameSpace;
+    }
 }
