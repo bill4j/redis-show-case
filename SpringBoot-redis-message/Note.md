@@ -29,11 +29,11 @@ List<Object> results = stringRedisTemplate.executePipelined(
   }
 });
 ```
-**该方案为批量传输命令以此来减少连接提高效率，并非`redis`事物支持**
+**该方案为批量传输命令以此来减少连接提高效率，并非`redis`事务支持**
 
 
 ### spring-data-redis 事务实现示例
-**在集群模式下，`spring-data-redis`不支持事物实现**
+**在集群模式下，`spring-data-redis`不支持事务实现**
 
 示例代码(org.springframework.data.redis.support.collections.DefaultRedisMap):
 ```
@@ -59,7 +59,7 @@ redisTemplate.getOperations().execute(new SessionCallback<Boolean>() {
 ```
 #### 实现方式:
 1) 使用`watch(key)`开启一个`key`监控。
-2) `multi`开启事物模块。
+2) `multi`开启事务模块。
 3) `exec`执行脚本命令。根据`redis`指令描述，此时也有`unwatch(key)`功能。
 
 ##### 代码分析：
@@ -67,9 +67,9 @@ redisTemplate.getOperations().execute(new SessionCallback<Boolean>() {
 此处采用自旋的方式进行阻塞与不断的尝试，当处理`remove`操作时发现，`key`对应的`value`被修改，则命令不生效，再次进行修改尝试，直至修改成功。
 
 ##### 采坑记录
-1. 由于事物具有隔离性，因此在`multi`开启的事物块中，是无法获取到`watch(key)`对应的`key`值，此处的代码在事物块之前获取了该值。同时此处使用了`watch(Collections.singleton(getKey()))`代替`watch(key())`避免在事物块中无法获取该值。
+1. 由于事务具有隔离性，因此在`multi`开启的事务块中，是无法获取到`watch(key)`对应的`key`值，此处的代码在事务块之前获取了该值。同时此处使用了`watch(Collections.singleton(getKey()))`代替`watch(key())`避免在事务块中无法获取该值。
 2. `exe()`会实现`unwatch`功能，所以每次循环结束的时已经关闭了`key`的监控，需要重新开启。
-3. 采用该方式需要在`redisTemplate`中开启事物支持` template.setEnableTransactionSupport(true)`
+3. 采用该方式需要在`redisTemplate`中开启事务支持` template.setEnableTransactionSupport(true)`
 
 ### spring-data-redis 脚本实现示例
 ***使用`lua`脚本也可以实现原子操作，且没有环境限制***
