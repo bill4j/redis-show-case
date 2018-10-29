@@ -20,3 +20,4 @@ spring:
     host: 127.0.0.2
     password: lijun
     port: 6378
+    nameSpace: test-lj

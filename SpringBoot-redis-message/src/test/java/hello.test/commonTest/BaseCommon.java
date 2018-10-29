@@ -1,5 +1,7 @@
 package hello.test.commonTest;
 
+import hello.config.RedisConfig;
+import hello.config.RedisProperties;
 import hello.test.MainTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ public class BaseCommon extends MainTest {
 
     @Test
     public void test() {
-        System.out.println("test");
+        System.out.println(RedisProperties.nameSpace);
+        //System.out.println("test");
     }
 }
